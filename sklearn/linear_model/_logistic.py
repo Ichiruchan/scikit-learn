@@ -505,6 +505,7 @@ def _logistic_regression_path(
     max_squared_sum=None,
     sample_weight=None,
     l1_ratio=None,
+    bounds=None
 ):
     """Compute a Logistic Regression model for a list of regularization
     parameters.
@@ -810,6 +811,7 @@ def _logistic_regression_path(
                 jac=True,
                 args=(X, target, 1.0 / C, sample_weight),
                 options={"iprint": iprint, "gtol": tol, "maxiter": max_iter},
+                bounds=bounds
             )
             n_iter_i = _check_optimize_result(
                 solver,
@@ -921,6 +923,7 @@ def _log_reg_scoring_path(
     max_squared_sum=None,
     sample_weight=None,
     l1_ratio=None,
+    bounds=None
 ):
     """Computes scores across logistic_regression_path
 
@@ -1077,6 +1080,7 @@ def _log_reg_scoring_path(
         check_input=False,
         max_squared_sum=max_squared_sum,
         sample_weight=sample_weight,
+        bounds=bounds
     )
 
     log_reg = LogisticRegression(solver=solver, multi_class=multi_class)
@@ -1411,6 +1415,7 @@ class LogisticRegression(LinearClassifierMixin, SparseCoefMixin, BaseEstimator):
         warm_start=False,
         n_jobs=None,
         l1_ratio=None,
+        bounds=None
     ):
 
         self.penalty = penalty
@@ -1428,6 +1433,7 @@ class LogisticRegression(LinearClassifierMixin, SparseCoefMixin, BaseEstimator):
         self.warm_start = warm_start
         self.n_jobs = n_jobs
         self.l1_ratio = l1_ratio
+        self.bounds = bounds
 
     def fit(self, X, y, sample_weight=None):
         """
@@ -1610,6 +1616,7 @@ class LogisticRegression(LinearClassifierMixin, SparseCoefMixin, BaseEstimator):
                 penalty=penalty,
                 max_squared_sum=max_squared_sum,
                 sample_weight=sample_weight,
+                bounds=self.bounds
             )
             for class_, warm_start_coef_ in zip(classes_, warm_start_coef)
         )
@@ -1988,6 +1995,7 @@ class LogisticRegressionCV(LogisticRegression, LinearClassifierMixin, BaseEstima
         multi_class="auto",
         random_state=None,
         l1_ratios=None,
+        bounds=None
     ):
         self.Cs = Cs
         self.fit_intercept = fit_intercept
@@ -2006,6 +2014,7 @@ class LogisticRegressionCV(LogisticRegression, LinearClassifierMixin, BaseEstima
         self.multi_class = multi_class
         self.random_state = random_state
         self.l1_ratios = l1_ratios
+        self.bounds = bounds
 
     def fit(self, X, y, sample_weight=None):
         """Fit the model according to the given training data.
@@ -2178,6 +2187,7 @@ class LogisticRegressionCV(LogisticRegression, LinearClassifierMixin, BaseEstima
                 max_squared_sum=max_squared_sum,
                 sample_weight=sample_weight,
                 l1_ratio=l1_ratio,
+                bounds=self.bounds
             )
             for label in iter_encoded_labels
             for train, test in folds
